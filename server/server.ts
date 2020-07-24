@@ -2,8 +2,43 @@ import express = require('express');
 import axios from "axios";
 import { validationResult, checkSchema } from 'express-validator';
 
+import redis from "redis";
+
+//setup port constants
+const port_redis = Number(process.env.PORT) || 6379;
+const port = Number(process.env.PORT) || 5000;
+
+//configure redis client on port 6379
+const redis_client = redis.createClient(port_redis);
+
 // Create a new express app instance
 const app: express.Application = express();
+
+//Middleware Function to Check Cache
+const checkCache = (req: any, res: any, next: any) => {
+    const { text, type, page, per_page } = req.query;
+
+    redis_client.get(`text=${text}&type=${type}&page=${page}&per_page=${per_page}`, (err: any, data: any) => {
+
+
+        if (err) {
+            console.log(err);
+            res.status(500).send(err);
+        }
+        //if no match found
+        if (data != null) {
+            res.send(JSON.parse(data));
+        } else {
+            //proceed to next middleware function
+            next();
+        }
+    });
+};
+
+const validators = [
+
+]
+
 
 app.get('/', function (req, res) {
     res.send('Hello World!');
@@ -39,19 +74,26 @@ app.get(
             toInt: true
         }
     }),
+    checkCache,
+
     async (req: any, res: any) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { text, type, page, per_page} = req.query;
+        const { text, type, page, per_page } = req.query;
 
         try {
             const usersRes = await axios.get(
                 `https://api.github.com/search/${type}?q=${text}&page=${page}&per_page=${per_page}`,
                 { headers: { Authorization: `token 8db0c1b68f1198949a7dfafd7b2dbd110a721e29` } }
             )
+
+            //add data to Redis
+            redis_client.setex(`text=${text}&type=${type}&page=${page}&per_page=${per_page}`, 7200, JSON.stringify(usersRes.data));
+
+
             return res.send(usersRes.data);
         }
         catch (err) {
