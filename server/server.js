@@ -59,9 +59,23 @@ app.get('/api/search', express_validator_1.checkSchema({
             errorMessage: 'Search type should be either users, repositories or issues',
             options: [/\b(?:users|repositories|issues)\b/],
         }
+    },
+    page: {
+        isInt: {
+            errorMessage: 'Page number should be an valid integer',
+            options: { min: 1 }
+        },
+        toInt: true
+    },
+    per_page: {
+        isInt: {
+            errorMessage: 'Records per page should be more than 0 and less than or equal to 100',
+            options: { min: 1, max: 100 }
+        },
+        toInt: true
     }
 }), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var errors, _a, text, type, usersRes, err_1;
+    var errors, _a, text, type, page, per_page, usersRes, err_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -69,11 +83,11 @@ app.get('/api/search', express_validator_1.checkSchema({
                 if (!errors.isEmpty()) {
                     return [2 /*return*/, res.status(400).json({ errors: errors.array() })];
                 }
-                _a = req.query, text = _a.text, type = _a.type;
+                _a = req.query, text = _a.text, type = _a.type, page = _a.page, per_page = _a.per_page;
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, axios_1.default.get("https://api.github.com/search/" + type + "?q=" + text, { headers: { Authorization: "token 8db0c1b68f1198949a7dfafd7b2dbd110a721e29" } })];
+                return [4 /*yield*/, axios_1.default.get("https://api.github.com/search/" + type + "?q=" + text + "&page=" + page + "&per_page=" + per_page, { headers: { Authorization: "token 8db0c1b68f1198949a7dfafd7b2dbd110a721e29" } })];
             case 2:
                 usersRes = _b.sent();
                 return [2 /*return*/, res.send(usersRes.data)];
