@@ -1,15 +1,14 @@
 import redis from "redis";
 import { throwValidationError } from "../utilities/validation.utility";
+import { getSearchId } from "../utilities/cache.utility";
 
 const port_redis = Number(process.env.PORT) || 6379;
 const redis_client = redis.createClient(port_redis);
 
 export const checkCache = (req: any, res: any, next: any) => {
     throwValidationError(req, res)
-    
-    const { text, type, page, per_page } = req.query;
 
-    redis_client.get(`text=${text}&type=${type}&page=${page}&per_page=${per_page}`, (err: any, data: any) => {
+    redis_client.get(getSearchId(req.query), (err: any, data: any) => {
         if (err) {
             console.log(err);
             res.status(500).send(err);
