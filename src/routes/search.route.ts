@@ -11,7 +11,7 @@ const router = express.Router();
 const redis_client = redis.createClient(Number(process.env.PORT_REDIS));
 
 router.get(
-    '/api/search',
+    `${process.env.BASE_URL}search`,
     validateSchema(),
     checkCache,
     async (req: any, res: any) => {

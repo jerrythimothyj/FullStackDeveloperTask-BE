@@ -10,7 +10,6 @@ import cache from './routes/cache.route';
 const port = Number(process.env.PORT);
 
 const app: express.Application = express();
-app.set('base', `/${process.env.BASE_URL}`);
 app.use('/', search);
 app.use('/', cache);
 
