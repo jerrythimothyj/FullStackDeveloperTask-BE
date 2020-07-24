@@ -68,7 +68,6 @@ var checkCache = function (req, res, next) {
         }
     });
 };
-var validators = [];
 app.get('/', function (req, res) {
     res.send('Hello World!');
 });
@@ -127,6 +126,18 @@ app.get('/api/search', express_validator_1.checkSchema({
         }
     });
 }); });
+app.get('/api/clear-cache', function (req, res) {
+    redis_client.flushall(function (err, data) {
+        if (err) {
+            console.log(err);
+            res.status(500).send(err);
+        }
+        //if no match found
+        if (data != null) {
+            res.send(data);
+        }
+    });
+});
 app.listen(4000, function () {
     console.log('App is listening on port 4000!');
 });

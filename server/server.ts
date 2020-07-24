@@ -35,11 +35,6 @@ const checkCache = (req: any, res: any, next: any) => {
     });
 };
 
-const validators = [
-
-]
-
-
 app.get('/', function (req, res) {
     res.send('Hello World!');
 });
@@ -99,6 +94,19 @@ app.get(
         catch (err) {
             return res.send(err);
         }
+    });
+
+    app.get('/api/clear-cache', function (req, res) {
+        redis_client.flushall((err: any, data: any) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send(err);
+            }
+            //if no match found
+            if (data != null) {
+                res.send(data);
+            } 
+        });
     });
 
 
