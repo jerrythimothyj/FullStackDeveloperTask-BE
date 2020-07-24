@@ -23,6 +23,20 @@ app.get(
                 errorMessage: 'Search type should be either users, repositories or issues',
                 options: [/\b(?:users|repositories|issues)\b/],
             }
+        },
+        page: {
+            isInt: {
+                errorMessage: 'Page number should be an valid integer',
+                options: { min: 1 }
+            },
+            toInt: true
+        },
+        per_page: {
+            isInt: {
+                errorMessage: 'Records per page should be more than 0 and less than or equal to 100',
+                options: { min: 1, max: 100 }
+            },
+            toInt: true
         }
     }),
     async (req: any, res: any) => {
@@ -31,11 +45,11 @@ app.get(
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { text, type } = req.query;
+        const { text, type, page, per_page} = req.query;
 
         try {
             const usersRes = await axios.get(
-                `https://api.github.com/search/${type}?q=${text}`,
+                `https://api.github.com/search/${type}?q=${text}&page=${page}&per_page=${per_page}`,
                 { headers: { Authorization: `token 8db0c1b68f1198949a7dfafd7b2dbd110a721e29` } }
             )
             return res.send(usersRes.data);
