@@ -2,12 +2,12 @@ import redis from "redis";
 import { throwValidationError } from "../utilities/validation.utility";
 import { getSearchId } from "../utilities/cache.utility";
 
-const redis_client = redis.createClient(Number(process.env.PORT_REDIS));
+const redisClient = redis.createClient(Number(process.env.PORT_REDIS));
 
 export const checkCache = (req: any, res: any, next: any) => {
     throwValidationError(req, res)
 
-    redis_client.get(getSearchId(req.query), (err: any, data: any) => {
+    redisClient.get(getSearchId(req.query), (err: any, data: any) => {
         if (err) {
             res.status(500).send(err);
         }

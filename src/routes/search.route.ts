@@ -8,7 +8,7 @@ import { getSearchId } from '../utilities/cache.utility';
 import { apiGet } from '../services/api.service';
 
 const router = express.Router();
-const redis_client = redis.createClient(Number(process.env.PORT_REDIS));
+const redisClient = redis.createClient(Number(process.env.PORT_REDIS));
 
 router.get(
     `${process.env.BASE_URL}search`,
@@ -20,7 +20,7 @@ router.get(
         const { text, type, page, per_page } = req.query;
         try {
             const result = await apiGet(`search/${type}`, {text, page, per_page })
-            redis_client.setex(getSearchId(req.query), Number(process.env.CACHE_TIMING), JSON.stringify(result.data));
+            redisClient.setex(getSearchId(req.query), Number(process.env.CACHE_TIMING), JSON.stringify(result.data));
             return res.send(result.data);
         }
         catch (err) {
