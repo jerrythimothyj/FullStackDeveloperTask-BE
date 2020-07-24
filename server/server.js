@@ -42,8 +42,33 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express = require("express");
 var axios_1 = __importDefault(require("axios"));
 var express_validator_1 = require("express-validator");
+var redis_1 = __importDefault(require("redis"));
+//setup port constants
+var port_redis = Number(process.env.PORT) || 6379;
+var port = Number(process.env.PORT) || 5000;
+//configure redis client on port 6379
+var redis_client = redis_1.default.createClient(port_redis);
 // Create a new express app instance
 var app = express();
+//Middleware Function to Check Cache
+var checkCache = function (req, res, next) {
+    var _a = req.query, text = _a.text, type = _a.type, page = _a.page, per_page = _a.per_page;
+    redis_client.get("text=" + text + "&type=" + type + "&page=" + page + "&per_page=" + per_page, function (err, data) {
+        if (err) {
+            console.log(err);
+            res.status(500).send(err);
+        }
+        //if no match found
+        if (data != null) {
+            res.send(JSON.parse(data));
+        }
+        else {
+            //proceed to next middleware function
+            next();
+        }
+    });
+};
+var validators = [];
 app.get('/', function (req, res) {
     res.send('Hello World!');
 });
@@ -74,7 +99,7 @@ app.get('/api/search', express_validator_1.checkSchema({
         },
         toInt: true
     }
-}), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+}), checkCache, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var errors, _a, text, type, page, per_page, usersRes, err_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -87,9 +112,13 @@ app.get('/api/search', express_validator_1.checkSchema({
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, axios_1.default.get("https://api.github.com/search/" + type + "?q=" + text + "&page=" + page + "&per_page=" + per_page, { headers: { Authorization: "token 8db0c1b68f1198949a7dfafd7b2dbd110a721e29" } })];
+                return [4 /*yield*/, axios_1.default.get("https://api.github.com/search/" + type + "?q=" + text + "&page=" + page + "&per_page=" + per_page, { headers: { Authorization: "token 8db0c1b68f1198949a7dfafd7b2dbd110a721e29" } })
+                    //add data to Redis
+                ];
             case 2:
                 usersRes = _b.sent();
+                //add data to Redis
+                redis_client.setex("text=" + text + "&type=" + type + "&page=" + page + "&per_page=" + per_page, 7200, JSON.stringify(usersRes.data));
                 return [2 /*return*/, res.send(usersRes.data)];
             case 3:
                 err_1 = _b.sent();
