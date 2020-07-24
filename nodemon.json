@@ -1,0 +1,5 @@
+{
+    "watch": ["server"],
+    "ext": "ts",
+    "exec": "./node_modules/.bin/tsc && node server/server.js"
+  }
