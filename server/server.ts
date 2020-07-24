@@ -1,6 +1,6 @@
 import express = require('express');
-import axios from "axios"
-const { query, validationResult, checkSchema } = require('express-validator');
+import axios from "axios";
+import { validationResult, checkSchema } from 'express-validator';
 
 // Create a new express app instance
 const app: express.Application = express();
@@ -11,22 +11,20 @@ app.get('/', function (req, res) {
 
 app.get(
     '/api/search',
-    [
-        checkSchema({
-            text: {
-                isLength: {
-                    errorMessage: 'Search text should be 3 or more characters',
-                    options: { min: 3 }
-                }
-            },
-            type: {
-                matches: {
-                    errorMessage: 'Search type should be either users, repositories or issues',
-                    options: [/\b(?:users|repositories|issues)\b/],
-                }
+    checkSchema({
+        text: {
+            isLength: {
+                errorMessage: 'Search text should be 3 or more characters',
+                options: { min: 3 }
             }
-        })
-    ],
+        },
+        type: {
+            matches: {
+                errorMessage: 'Search type should be either users, repositories or issues',
+                options: [/\b(?:users|repositories|issues)\b/],
+            }
+        }
+    }),
     async (req: any, res: any) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

@@ -41,33 +41,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express = require("express");
 var axios_1 = __importDefault(require("axios"));
-var _a = require('express-validator'), query = _a.query, validationResult = _a.validationResult, checkSchema = _a.checkSchema;
+var express_validator_1 = require("express-validator");
 // Create a new express app instance
 var app = express();
 app.get('/', function (req, res) {
     res.send('Hello World!');
 });
-app.get('/api/search', [
-    checkSchema({
-        text: {
-            isLength: {
-                errorMessage: 'Search text should be 3 or more characters',
-                options: { min: 3 }
-            }
-        },
-        type: {
-            matches: {
-                errorMessage: 'Search type should be either users, repositories or issues',
-                options: [/\b(?:users|repositories|issues)\b/],
-            }
+app.get('/api/search', express_validator_1.checkSchema({
+    text: {
+        isLength: {
+            errorMessage: 'Search text should be 3 or more characters',
+            options: { min: 3 }
         }
-    })
-], function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    },
+    type: {
+        matches: {
+            errorMessage: 'Search type should be either users, repositories or issues',
+            options: [/\b(?:users|repositories|issues)\b/],
+        }
+    }
+}), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var errors, _a, text, type, usersRes, err_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                errors = validationResult(req);
+                errors = express_validator_1.validationResult(req);
                 if (!errors.isEmpty()) {
                     return [2 /*return*/, res.status(400).json({ errors: errors.array() })];
                 }
