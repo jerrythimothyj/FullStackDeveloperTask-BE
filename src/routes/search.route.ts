@@ -1,9 +1,9 @@
 import express from 'express';
 import axios from "axios";
-import { validationResult, checkSchema } from 'express-validator';
 import redis from "redis";
 import { checkCache } from "../middlewares/cache.middleware"
 import { validateSchema } from "../middlewares/validation.middleware"
+import { throwValidationError } from '../utilities/validation.utility';
 
 const router = express.Router();
 const port_redis = Number(process.env.PORT) || 6379;
@@ -14,10 +14,7 @@ router.get(
     validateSchema(),
     checkCache,
     async (req: any, res: any) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
+        throwValidationError(req, res)
 
         const { text, type, page, per_page } = req.query;
         try {
