@@ -18,26 +18,26 @@ app.use(bodyParser.json())
 
 const swaggerOptions = {
     swaggerDefinition: {
-      info: {
-        version: "1.0.0",
-        title: "Github API",
-        description: "Github API Information",
-        contact: {
-          name: "Jerry"
-        },
-        servers: ["http://localhost:4100"]
-      }
+        info: {
+            version: "1.0.0",
+            title: "Github API",
+            description: "Github API Information",
+            contact: {
+                name: "Jerry"
+            },
+            servers: [`http://localhost:${process.env.PORT}`]
+        }
     },
     apis: ["dist/routes/**/*.js"]
-  };
-  
-  const swaggerDocs = swaggerJsDoc(swaggerOptions);
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-  
-  app.use('/', search);
-  app.use('/', cache);
-  
-  
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+app.use('/', search);
+app.use('/', cache);
+
+
 
 app.listen(port, function () {
     console.log(`App is listening on port ${process.env.PORT}!`);

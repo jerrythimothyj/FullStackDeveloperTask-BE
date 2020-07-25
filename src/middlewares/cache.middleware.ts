@@ -7,7 +7,7 @@ const redisClient = redis.createClient(Number(process.env.PORT_REDIS));
 export const checkCache = (req: any, res: any, next: any) => {
     throwValidationError(req, res)
 
-    redisClient.get(getSearchId(req.query), (err: any, data: any) => {
+    redisClient.get(getSearchId(req.body), (err: any, data: any) => {
         if (err) {
             res.status(500).send(err);
         }
