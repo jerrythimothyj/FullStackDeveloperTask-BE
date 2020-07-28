@@ -36,9 +36,7 @@
     "@typescript-eslint/parser": "^3.7.0",
     "eslint": "^7.5.0",
     "husky": "^4.2.5",
-    "install": "^0.13.0",
     "nodemon": "^2.0.4",
-    "npm": "^6.14.7",
     "typescript": "^3.9.7"
   }
 }
