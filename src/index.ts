@@ -4,6 +4,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 import express from 'express';
+import cors from "cors";
 import bodyParser from 'body-parser'
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
@@ -13,6 +14,12 @@ import cache from './routes/cache.route';
 const port = Number(process.env.PORT);
 
 const app: express.Application = express();
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
