@@ -1,11 +1,10 @@
 import express from 'express';
-import axios from "axios";
 import redis from "redis";
 import { checkCache } from "../middlewares/cache.middleware"
 import { validateSchema } from "../middlewares/validation.middleware"
 import { throwValidationError } from '../utilities/validation.utility';
 import { getSearchId } from '../utilities/cache.utility';
-import { apiGet } from '../services/api.service';
+import { fetchData } from '../services/search.service';
 
 const router = express.Router();
 const redisClient = redis.createClient(Number(process.env.PORT_REDIS));
@@ -51,16 +50,16 @@ router.post(
     validateSchema(),
     checkCache,
     async (req: any, res: any) => {
-        throwValidationError(req, res)
-
-        const { text, type, page, per_page } = req.body;
-        try {
-            const result = await apiGet(`search/${type}`, { text, page, per_page })
-            redisClient.setex(getSearchId(req.body), Number(process.env.CACHE_TIMING), JSON.stringify(result.data));
-            return res.send(result.data);
-        }
-        catch (err) {
-            return res.status(500).send(err);
+        if (!throwValidationError(req, res)) {
+            const { text, type, page, per_page } = req.body;
+            try {
+                const result = await fetchData(type, { text, page, per_page })
+                redisClient.setex(getSearchId(req.body), Number(process.env.CACHE_TIMING), JSON.stringify(result.data));
+                return res.send(result.data);
+            }
+            catch (err) {
+                return res.status(500).send(err);
+            }
         }
     }
 );
