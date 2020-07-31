@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "./node_modules/.bin/nodemon",
-    "lint": "node ./node_modules/eslint/bin/eslint.js src --ext .ts",
+    "lint": "node ./node_modules/eslint/bin/eslint.js \"src/**/*.ts\" --config .eslintrc.js",
+    "lint:fix": "node ./node_modules/eslint/bin/eslint.js \"src/**/*.ts\" --config .eslintrc.js --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "husky": {
