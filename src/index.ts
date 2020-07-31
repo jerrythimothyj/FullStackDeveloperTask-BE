@@ -37,14 +37,10 @@ const swaggerOptions = {
     },
     apis: ["dist/routes/**/*.js"]
 };
-
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-
 app.use('/', search);
 app.use('/', cache);
-
-
 
 app.listen(port, function () {
     console.log(`App is listening on port ${process.env.PORT}!`);

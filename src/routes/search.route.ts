@@ -12,8 +12,11 @@ const redisClient = redis.createClient(Number(process.env.PORT_REDIS));
 /**
    * @swagger
    * /api/search:
-   *    post:
-   *      description: Use to return search results
+   *  post:
+   *    description: Use to get data
+   *    responses:
+   *      '200':
+   *        description: A successful response
    *    parameters:
    *      - in: body
    *        name: serch
@@ -41,9 +44,6 @@ const redisClient = redis.createClient(Number(process.env.PORT_REDIS));
    *              minumum: 1
    *              maximum: 100
    *              example: 1
-   *    responses:
-   *      '200':
-   *        description: A successful response
    */
 router.post(
     `${process.env.BASE_URL}search`,
