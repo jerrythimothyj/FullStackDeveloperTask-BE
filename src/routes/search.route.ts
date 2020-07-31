@@ -55,12 +55,12 @@ router.post(
 
         const { text, type, page, per_page } = req.body;
         try {
-            const result = await apiGet(`search/${type}`, {text, page, per_page })
+            const result = await apiGet(`search/${type}`, { text, page, per_page })
             redisClient.setex(getSearchId(req.body), Number(process.env.CACHE_TIMING), JSON.stringify(result.data));
             return res.send(result.data);
         }
         catch (err) {
-            return res.send(err);
+            return res.status(500).send(err);
         }
     }
 );
