@@ -10,11 +10,9 @@ export const checkCache = (req: any, res: any, next: any) => {
             if (err) {
                 res.status(500).send(err);
             }
-            //if no match found
             if (data != null) {
                 res.send(JSON.parse(data));
             } else {
-                //proceed to next middleware function
                 next();
             }
         });
