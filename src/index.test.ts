@@ -1,7 +1,3 @@
-// // This test fails because 1 !== 2
-// it('Testing to see if Jest works', () => {
-//   expect(2).toBe(2)
-// })
 import supertest from "supertest"
 import app from "./index"
 
